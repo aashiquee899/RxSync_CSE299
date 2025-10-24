@@ -17,7 +17,10 @@ export default function Index() {
       </View>
 
       <View className="w-full px-10 mb-10">
-        <TouchableOpacity className="bg-[#3D6DB4] w-full py-6 rounded-3xl">
+        <TouchableOpacity
+          className="bg-[#3D6DB4] w-full py-6 rounded-3xl"
+          onPress={() => router.navigate("/auth/login")}
+        >
           <Text className="text-white text-center text-lg font-bold">
             Get Started
           </Text>
