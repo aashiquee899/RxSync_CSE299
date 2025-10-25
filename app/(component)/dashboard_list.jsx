@@ -6,7 +6,7 @@ export default function DashboardList() {
   const [isChecked, setChecked] = useState(false);
 
   return (
-    <View className="flex-row justify-between">
+    <View className="flex-row justify-between mb-6">
       <View>
         <Text className="text-black text-lg font-medium mb-1">
           Medicine Name
