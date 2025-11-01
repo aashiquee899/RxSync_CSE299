@@ -1,9 +1,33 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
+import { useEffect } from "react";
+import { ActivityIndicator, View } from "react-native";
+import { useAuth } from "../../context/AuthContext";
 
 export default function HomeLayout() {
+  const { isLoggedIn, isLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+
+    if (!isLoggedIn) {
+      router.replace("/auth/login");
+    }
+  }, [isLoggedIn, isLoading, router]);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
   return (
     <Tabs
       screenOptions={{
