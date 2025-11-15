@@ -58,12 +58,12 @@ export default function HomeLayout() {
       />
 
       <Tabs.Screen
-        name="manage_prescriptions"
+        name="medical_history"
         options={{
-          title: "Manage Prescriptions",
+          title: "Medical History",
           tabBarShowLabel: false,
           tabBarIcon: ({ color }) => (
-            <FontAwesome6 name="photo-film" size={24} color={color} />
+            <MaterialIcons name="work-history" size={24} color={color} />
           ),
           headerStyle: {
             backgroundColor: "#3D6DB4",
@@ -88,12 +88,12 @@ export default function HomeLayout() {
       />
 
       <Tabs.Screen
-        name="medical_history"
+        name="order_medicine"
         options={{
-          title: "Medical History",
+          title: "Order Medicine",
           tabBarShowLabel: false,
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="work-history" size={24} color={color} />
+            <FontAwesome6 name="cart-shopping" size={24} color={color} />
           ),
           headerStyle: {
             backgroundColor: "#3D6DB4",
