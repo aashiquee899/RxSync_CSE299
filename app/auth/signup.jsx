@@ -22,7 +22,7 @@ export default function SignUp() {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSignUp = async () => {
+  async function onSignUp() {
     if (!form.name || !form.email || !form.password || !form.confirmPassword) {
       Alert.alert("Error", "Please fill in all fields.");
       return;
@@ -51,7 +51,7 @@ export default function SignUp() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   return (
     <SafeAreaView className="flex-1 justify-start items-center px-5">

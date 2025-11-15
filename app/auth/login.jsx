@@ -20,7 +20,7 @@ export default function Login() {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const onLogin = async () => {
+  async function onLogin() {
     if (!form.email || !form.password) {
       Alert.alert("Error", "Please fill in all fields.");
       return;
@@ -39,7 +39,7 @@ export default function Login() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   return (
     <SafeAreaView className="flex-1 justify-start items-center px-5">
