@@ -1,8 +1,9 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Query } from "appwrite";
+import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -18,6 +19,16 @@ import DashboardList from "../(component)/dashboard_list";
 import { useAuth } from "../../context/AuthContext";
 import { appwriteConfig, databases } from "../../lib/appwrite/config";
 
+const NOTIFICATION_INTERVAL = 60000;
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const router = useRouter();
@@ -29,7 +40,49 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
+  const upcomingDosesRef = useRef([]);
+
   const timeOrder = { morning: 1, noon: 2, night: 3 };
+
+  useEffect(() => {
+    (async () => {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        console.log("Failed to get push token for push notification!");
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    const intervalId = setInterval(async () => {
+      const currentList = upcomingDosesRef.current;
+
+      if (currentList.length > 0) {
+        const medicineListString = currentList
+          .map((d) => `${d.medicineName} (${d.timeSlot})`)
+          .join(", ");
+
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "💊 Upcoming Medication Reminder",
+            body: `You have doses waiting: ${medicineListString}`,
+            sound: true,
+          },
+          trigger: null,
+        });
+
+        console.log("Notification sent for:", medicineListString);
+      }
+    }, NOTIFICATION_INTERVAL);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   const loadDailyStatus = async () => {
     try {
@@ -138,6 +191,10 @@ export default function Dashboard() {
   const missedDoses = allDoses.filter(
     (d) => doseStatus[d.uniqueId] === "skipped"
   );
+
+  useEffect(() => {
+    upcomingDosesRef.current = upcomingDoses;
+  }, [upcomingDoses]);
 
   const renderDoseList = (doses, listType) => {
     if (doses.length === 0) {
